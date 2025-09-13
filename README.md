@@ -15,7 +15,5 @@ git clone https://github.com/Schatten900/proj-iaa.git
 cd proj-iaa
 
 # Execute os containers
-docker-compose up -d
+docker-compose up --build
 
-# Ou para ver os logs em tempo real:
-docker-compose up
