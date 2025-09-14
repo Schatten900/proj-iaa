@@ -1,13 +1,14 @@
 "use client"
 import { useState } from "react";
+import { useRouter } from 'next/navigation'
 
 export default function Cadastro() {
   const [form, setForm] = useState({
     nome: "",
     email: "",
-    usuario: "",
     senha: "",
   });
+  const router = useRouter()
 
   const [hover, setHover] = useState(false);
 
@@ -19,7 +20,7 @@ export default function Cadastro() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:3001/auth/register", {
+    const res = await fetch("http://localhost:5000/api/user/cadastrar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
@@ -27,6 +28,7 @@ export default function Cadastro() {
 
     if (res.ok){
       alert("Usuário cadastrado com sucesso!");
+      router.push('/login')
     } else {
       alert("Erro ao cadastrar!");
     }
@@ -75,7 +77,7 @@ export default function Cadastro() {
               }}
               />
 
-            <label>E-mail ou telefone</label>
+            <label>E-mail</label>
             <input 
               name="email"
               onChange={handleChange}
@@ -88,22 +90,9 @@ export default function Cadastro() {
               }}
               />
 
-            <label>Nome de usuário</label>
-            <input 
-              name="usuario"
-              onChange={handleChange}
-              style={{
-                marginBottom: "1rem", // espaçamento entre os campos
-                padding: "10px",
-                background: "#E6E6E6",
-                borderRadius: "15px",
-                border: "none"
-              }}
-              />
-
             <label>Senha</label>
             <input 
-              name="password"
+              name="senha"
               onChange={handleChange}
               style={{
                 marginBottom: "1rem", // espaçamento entre os campos

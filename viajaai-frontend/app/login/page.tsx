@@ -1,11 +1,13 @@
 "use client"
 import { useState } from "react";
+import { useRouter } from 'next/navigation'
 
 export default function Login() {
   const [form, setForm] = useState({
-    usuario: "",
+    email: "",
     senha: "",
   });
+  const router = useRouter()
 
   const [hover, setHover] = useState(false);
 
@@ -17,14 +19,17 @@ export default function Login() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const res = await fetch("http://localhost:3001/auth/login", {
+    const res = await fetch("http://localhost:5000/api/user/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(form),
     });
 
+    console.log(form)
+
     if (res.ok){
       alert("Usuário autorizado com sucesso!");
+      router.push('/perfil')
     } else {
       alert("Erro ao autorizar!");
     }
@@ -61,9 +66,9 @@ export default function Login() {
             style={{ display: "flex", flexDirection: "column", width: "300px" }}
           >
 
-            <label>Nome de usuário</label>
+            <label>E-mail</label>
             <input 
-              name="usuario"
+              name="email"
               onChange={handleChange}
               style={{
                 marginBottom: "1rem", // espaçamento entre os campos
@@ -76,7 +81,7 @@ export default function Login() {
 
             <label>Senha</label>
             <input 
-              name="password"
+              name="senha"
               onChange={handleChange}
               style={{
                 marginBottom: "1rem", // espaçamento entre os campos

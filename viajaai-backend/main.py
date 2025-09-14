@@ -1,20 +1,33 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from flask_migrate import Migrate
+from flask_cors import CORS
 from config import Config
 
-db = SQLAlchemy()
-migrate = Migrate()
+# Import das rotas
+from Controller.test_controller import test_bp
+from Controller.user_controller import user_bp
+
+# Banco de dados
+from utils.database_executor import db_manager
 
 def create_app():
     app = Flask(__name__)
     app.config.from_object(Config)
     
-    db.init_app(app)
-    migrate.init_app(app, db)
+    CORS(app)
     
-    from Controller.test_controller import test_bp
+    # Registra blueprints
     app.register_blueprint(test_bp, url_prefix='/api/test')
+    app.register_blueprint(user_bp, url_prefix='/api/user')
+    
+    # endpoint para testar conexão com banco
+    @app.route('/health')
+    def health_check():
+        try:
+            with db_manager.get_connection() as conn:
+                if conn.is_connected():
+                    return {'status': 'healthy', 'database': 'connected'}, 200
+        except Exception as e:
+            return {'status': 'unhealthy', 'database': 'disconnected', 'error': str(e)}, 500
     
     return app
 
