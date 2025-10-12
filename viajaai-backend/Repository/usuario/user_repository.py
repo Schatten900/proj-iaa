@@ -46,5 +46,14 @@ class UserContainer:
             return len(result) > 0
         except Exception as e:
             raise Exception(f"Erro ao verificar email: {str(e)}")
+        
+    def cadastrarPreferencias(self,id_user,clima,preco,companhia):
+        try:
+            QUERY = "INSERT INTO Preferencias (UsuarioId,Clima,Preco,Companhia) VALUES (%s,%s,%s,%s)"
+            params = (id_user,clima,preco,companhia,)
+            result = db_executor.execute_insert(QUERY, params)
+            
+        except Exception as e:
+            raise Exception(f"Erro ao cadastrar preferencias: {str(e)}")
 
         

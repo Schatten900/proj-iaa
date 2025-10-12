@@ -9,10 +9,6 @@ user_service = UserService()
 
 # Rotas
 
-@user_bp.route('/', methods=['GET'])
-def get_test():
-    return jsonify({"ok": "ok", "message": "API do user funcionando!"})
-
 @user_bp.route('/login', methods=['POST'])
 def login():
     try:
