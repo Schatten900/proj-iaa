@@ -10,6 +10,13 @@ class User(Dominio):
         self._email = Email()
         self._senha = Senha()
         self._id = 0
+        self.preferencias = {
+            'clima': 'temperado',
+            'preco': 'medio',
+            'companhia': 'casal'
+        }
+        self.generos_preferidos = {}  # {genero_id: preferencia}
+        self.lazeres_preferidos = {}  # {lazer_id: importancia}
 
     def _validar(self,valor):
         pass
@@ -44,6 +51,16 @@ class User(Dominio):
 
     def setId(self,id):
         self._id = id
+
+    def set_preferencia(self, tipo, valor):
+        if tipo in self.preferencias:
+            self.preferencias[tipo] = valor
+    
+    def add_genero_preferido(self, genero_id, preferencia):
+        self.generos_preferidos[genero_id] = preferencia
+    
+    def add_lazer_preferido(self, lazer_id, importancia):
+        self.lazeres_preferidos[lazer_id] = importancia
 
 
     
