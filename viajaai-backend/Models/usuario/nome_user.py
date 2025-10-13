@@ -15,7 +15,5 @@ class Nome(Dominio):
             raise ValueError("Nome deve ter no máximo 16 caracteres")
 
         for letter in nome:
-            if letter.isdigit():
-                raise ValueError("Nomes não devem conter digitos")
             if not letter.isalnum():
                 raise ValueError("Nomes não devem conter caracteres especiais")
