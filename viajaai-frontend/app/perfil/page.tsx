@@ -3,9 +3,8 @@ import { useState } from "react";
 
 export default function Perfil() {
     const [form, setForm] = useState({
+        clima: "",
         orcamento: "",
-        duracao: "",
-        genero: "",
         pessoas: "",
     });
 
@@ -55,60 +54,53 @@ export default function Perfil() {
                     maxWidth: "1000px",
                 }}
             >
+
+                {/*Card clima*/}
+                <div style={cardStyle}>
+                    <label style={labelStyle}>Qual o clima ideal<br></br> para você?</label>
+                    <select
+                        name="clima"
+                        value={form.clima}
+                        onChange={handleChange}
+                        style={inputStyle}
+                    >
+                        <option value="Quente">Quente</option>
+                        <option value="Tropical">Tropical</option>
+                        <option value="Temperado">Temperado</option>
+                        <option value="Frio">Frio</option>
+                    </select>
+                </div>
             
                 {/*Card orçamento*/}
                 <div style={cardStyle}>
                     <label style={labelStyle}>Qual seu orçamento para a viagem?</label>
-                    <input
-                        type="number"
-                        name="orcamento"
-                        placeholder="R$ 0,00"
-                        value="form.orcamento"
-                        onChange={handleChange}
-                        style={inputStyle}
-                    />
-                </div>
-
-
-                {/*Card duração*/}
-                <div style={cardStyle}>
-                    <label style={labelStyle}>Qual a duração prevista da viagem?</label>
-                    <input
-                        type="number"
-                        name="duracao"
-                        placeholder="Escreva em dígitos numéricos"
-                        value="form.duracao"
-                        onChange={handleChange}
-                        style={inputStyle}
-                    />
-                </div>
-
-                {/*Card gênero*/}
-                <div style={cardStyle}>
-                    <label style={labelStyle}>Qual o seu<br></br> gênero?</label>
                     <select
-                        name="genero"
-                        value="form.genero"
+                        name="orcamento"
+                        value={form.orcamento}
                         onChange={handleChange}
                         style={inputStyle}
                     >
-                        <option value="Feminino">Feminino</option>
-                        <option value="Masculino">Masculino</option>
-                        <option value="Outro">Outro</option>
+                        <option value="Econômico">Econômico</option>
+                        <option value="Médio">Médio</option>
+                        <option value="Alto">Alto</option>
+                        <option value="Luxo">Luxo</option>
                     </select>
                 </div>
 
                 {/*Card pessoas*/}
                 <div style={cardStyle}>
-                    <label style={labelStyle}>Quantas pessoas irão viajar?</label>
-                    <input
-                        type="number"
+                    <label style={labelStyle}>Qual será sua companhia de viagem?</label>
+                    <select
                         name="pessoas"
-                        placeholder="Escreva em dígitos numéricos"
-                        value="form.pessoas"
+                        value={form.pessoas}
                         onChange={handleChange}
                         style={inputStyle}
-                    />
+                    >
+                        <option value="Sozinho">Sozinho</option>
+                        <option value="Casal">Casal</option>
+                        <option value="Família">Família</option>
+                        <option value="Amigos">Amigos</option>
+                    </select>
                 </div>
             </form>
 
