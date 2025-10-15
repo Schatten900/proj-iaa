@@ -11,13 +11,13 @@ type Opcao = {
 
 export default function Preferencias() {
   const opcoes: Opcao[] = [
-    { id: "piscina", titulo: "Piscina", descricao: "Áreas de piscina e relaxamento aquático" },
-    { id: "fotografia", titulo: "Fotografia", descricao: "Pontos cênicos e paisagens" },
-    { id: "compras", titulo: "Compras", descricao: "Comércio e centros de compras" },
-    { id: "natureza", titulo: "Natureza", descricao: "Parques e reservas naturais" },
-    { id: "praia", titulo: "Praia", descricao: "Atividades em praias e litoral" },
-    { id: "radical", titulo: "Radical", descricao: "Esportes radicais e aventuras" },
-    { id: "vida_noturna", titulo: "Vida noturna", descricao: "Bares, clubes e festas" },
+    { id: "romance", titulo: "Romance", descricao: "Viagens românticas para casais" },
+    { id: "aventura", titulo: "Aventura", descricao: "Viagens com atividades emocionantes e radicais" },
+    { id: "relaxamento", titulo: "Relaxamento", descricao: "Viagens focadas em descanso e bem-estar" },
+    { id: "historico", titulo: "Histórico", descricao: "Viagens com foco em patrimônio histórico" },
+    { id: "cultural", titulo: "Cultural", descricao: "Viagens para experienciar diferentes culturas" },
+    { id: "gastronomico", titulo: "Gastronômico", descricao: "Viagens focadas em experiências culinárias" },
+    { id: "ecoturismo", titulo: "Ecoturismo", descricao: "Viagens de contato com a natureza" },
   ];
 
   // armazenar apenas os IDs selecionados
@@ -49,10 +49,10 @@ export default function Preferencias() {
       {/* Título */}
       <div className="text-center text-white mb-8">
          <h1 style={{ fontSize: "3.5rem", fontWeight: "bold", marginBottom: "1rem", textShadow: "2px 2px 4px rgba(0,0,0,0.7)"}}>
-                Olá, user!
+                Está sendo ótimo te conhecer!
             </h1>
             <h2 style={{ fontSize: "2rem", marginBottom: "2rem", textShadow: "2px 2px 4px rgba(0,0,0,0.7)"}}>
-                Qual o seu lazer preferido?
+                Qual o seu gênero de viagem preferido?
             </h2>
       </div>
 
@@ -114,6 +114,9 @@ export default function Preferencias() {
                 ➡
             </button>
     </div>
+
+    
   );
-  console.log(selecionados)
+  
+    console.log(selecionados)
 }
