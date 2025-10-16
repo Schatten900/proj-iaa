@@ -12,13 +12,13 @@ type Opcao = {
 
 export default function Preferencias() {
   const opcoes: Opcao[] = [
-    { id: "1", titulo: "Piscina", descricao: "Áreas de piscina e relaxamento aquático" },
-    { id: "2", titulo: "Fotografia", descricao: "Pontos cênicos e paisagens" },
-    { id: "3", titulo: "Compras", descricao: "Comércio e centros de compras" },
-    { id: "4", titulo: "Natureza", descricao: "Parques e reservas naturais" },
-    { id: "5", titulo: "Praia", descricao: "Atividades em praias e litoral" },
-    { id: "6", titulo: "Radical", descricao: "Esportes radicais e aventuras" },
-    { id: "7", titulo: "Vida noturna", descricao: "Bares, clubes e festas" },
+    { id: "1", titulo: "Romance", descricao: "Viagens românticas para casais" },
+    { id: "2", titulo: "Aventura", descricao: "Viagens com atividades emocionantes e radicais" },
+    { id: "3", titulo: "Relaxamento", descricao: "Viagens focadas em descanso e bem-estar" },
+    { id: "4", titulo: "Histórico", descricao: "Viagens com foco em patrimônio histórico" },
+    { id: "5", titulo: "Cultural", descricao: "Viagens para experienciar diferentes culturas" },
+    { id: "6", titulo: "Gastronômico", descricao: "Viagens focadas em experiências culinárias" },
+    { id: "7", titulo: "Ecoturismo", descricao: "Viagens de contato com a natureza" },
   ];
 
   const [selecionados, setSelecionados] = useState<{ [key: string]: number }>({});
@@ -37,6 +37,8 @@ export default function Preferencias() {
     });
   };
 
+  const [hover, setHover] = useState(false);
+
   const handleIntensityChange = ( id: number, intensity: number) => {
     setSelecionados((prev) => {
       if (prev[id] !== undefined && user !== undefined) {
@@ -45,9 +47,6 @@ export default function Preferencias() {
       return prev;
     });
   };
-
-  const [hover, setHover] = useState(false);
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -59,27 +58,25 @@ export default function Preferencias() {
 
     console.log(selecionados)
 
-    for (const [ id, Intensidade] of Object.entries(selecionados)) {
-      const res = await fetch("http://localhost:5000/api/viagem/lazeres", {
+    for (const [ id, Preferencia] of Object.entries(selecionados)) {
+      const res = await fetch("http://localhost:5000/api/viagem/generos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
           UsuarioId: user.Id,
-          LazerId: id, 
-          Intensidade }),
+          GeneroId: id, 
+          Preferencia }),
       });
     
       if (!res.ok) {
-        alert(`Erro ao cadastrar o lazer ${id}`);
+        alert(`Erro ao cadastrar o gênero ${id}`);
         return;
       }
     }
     
-    alert("Lazeres cadastrados com sucesso!");
-    router.push('/generos');
+    alert("Gêneros cadastrados com sucesso!");
+    router.push('/home');
   };
-
-  console.log(selecionados)
 
   return (
     <div
@@ -89,10 +86,10 @@ export default function Preferencias() {
       {/* Título */}
       <div className="text-center text-white mb-8">
          <h1 style={{ fontSize: "3.5rem", fontWeight: "bold", marginBottom: "1rem", textShadow: "2px 2px 4px rgba(0,0,0,0.7)"}}>
-                Perfil interessante, {user?.Nome}!
+                Está sendo ótimo te conhecer, {user?.Nome}!
             </h1>
             <h2 style={{ fontSize: "2rem", marginBottom: "2rem", textShadow: "2px 2px 4px rgba(0,0,0,0.7)"}}>
-                Qual o seu lazer preferido?
+                Qual o seu gênero de viagem preferido?
             </h2>
       </div>
 
@@ -127,8 +124,13 @@ export default function Preferencias() {
                     <option value="4" style={{ color: "black" }}>4</option>
                     <option value="5" style={{ color: "black" }}>5</option>
                 </select>
+              </label>
+            );
+          })}
+        </div>
+      </div>
 
-                {/*Botão avançar*/}
+      {/*Botão avançar*/}
             <button
                 type="submit"
                 onClick={handleSubmit}
@@ -155,12 +157,10 @@ export default function Preferencias() {
             >
                 ➡
             </button>
-              </label>
-            );
-          })}
-        </div>
-      </div>
     </div>
+
+    
   );
-  console.log(selecionados)
+  
+    console.log(selecionados)
 }
