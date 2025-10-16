@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
-import router from "next/router";
+import { useRouter } from 'next/navigation'
+import { useUser } from "../../context/UserContext";
 
 type Opcao = {
   id: string;
@@ -22,25 +22,24 @@ export default function Preferencias() {
   ];
 
   const [selecionados, setSelecionados] = useState<{ [key: string]: number }>({});
+  const { user } = useUser();
+  const router = useRouter()
 
   const toggleOpcao = (id: string) => {
     setSelecionados((prev) => {
       const newSelection = { ...prev };
       if (newSelection[id] !== undefined) {
-        // Se já está selecionado, remove o lazer
         delete newSelection[id];
       } else {
-        // Se não, adiciona com intensidade padrão (ex: 1)
         newSelection[id] = 1;
       }
       return newSelection;
     });
   };
 
-  const handleIntensityChange = (id: string, intensity: number) => {
+  const handleIntensityChange = ( id: number, intensity: number) => {
     setSelecionados((prev) => {
-      // Só atualiza se o lazer já estiver selecionado
-      if (prev[id] !== undefined) {
+      if (prev[id] !== undefined && user !== undefined) {
         return { ...prev, [id]: intensity };
       }
       return prev;
@@ -53,11 +52,21 @@ export default function Preferencias() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    for (const [id, intensity] of Object.entries(selecionados)) {
+    if (!user) {
+            alert("Usuário não logado!");
+            return;
+    }
+
+    console.log(selecionados)
+
+    for (const [ id, Intensidade] of Object.entries(selecionados)) {
       const res = await fetch("http://localhost:5000/api/viagem/lazeres", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lazerId: id, intensity }),
+        body: JSON.stringify({ 
+          UsuarioId: user.Id,
+          LazerId: id, 
+          Intensidade }),
       });
     
       if (!res.ok) {
@@ -70,6 +79,8 @@ export default function Preferencias() {
     router.push('/generos');
   };
 
+  console.log(selecionados)
+
   return (
     <div
       className="flex flex-col items-center justify-center min-h-screen bg-cover bg-center px-4"
@@ -78,7 +89,7 @@ export default function Preferencias() {
       {/* Título */}
       <div className="text-center text-white mb-8">
          <h1 style={{ fontSize: "3.5rem", fontWeight: "bold", marginBottom: "1rem", textShadow: "2px 2px 4px rgba(0,0,0,0.7)"}}>
-                Olá, user!
+                Perfil interessante, {user?.Nome}!
             </h1>
             <h2 style={{ fontSize: "2rem", marginBottom: "2rem", textShadow: "2px 2px 4px rgba(0,0,0,0.7)"}}>
                 Qual o seu lazer preferido?
@@ -116,13 +127,8 @@ export default function Preferencias() {
                     <option value="4" style={{ color: "black" }}>4</option>
                     <option value="5" style={{ color: "black" }}>5</option>
                 </select>
-              </label>
-            );
-          })}
-        </div>
-      </div>
 
-      {/*Botão avançar*/}
+                {/*Botão avançar*/}
             <button
                 type="submit"
                 onClick={handleSubmit}
@@ -149,6 +155,11 @@ export default function Preferencias() {
             >
                 ➡
             </button>
+              </label>
+            );
+          })}
+        </div>
+      </div>
     </div>
   );
   console.log(selecionados)

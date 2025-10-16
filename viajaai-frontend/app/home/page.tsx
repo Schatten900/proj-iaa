@@ -1,5 +1,8 @@
+"use client";
+
 import React from "react";
 import { Star, User } from "lucide-react";
+import { useUser } from "../../context/UserContext";
 
 export default function HomePage(){
     const destinos = [
@@ -7,6 +10,8 @@ export default function HomePage(){
         { nome: "Lençóis Maranhenses", pais: "Brasil", custo: "R$ XX,XX", moeda: "R$ XX,XX", img: '/maranhao.png', rating: 5 }, 
         { nome: "Rio de Janeiro", pais: "Brasil", custo: "R$ XX,XX", moeda: "R$ XX,XX", img: '/rio.png', rating: 5 }, 
     ];
+
+    const { user } = useUser();
 
     return (
         <div className="min-h-screen flex flex-col font-sans">
@@ -23,7 +28,7 @@ export default function HomePage(){
                     <a href="#" className="hover:text-blue-600">Contato</a>
                 </nav>
                 <div className="flex items-center gap-2">
-                    <span className="text-blue-700 md:text-2xl">User</span>
+                    <span className="text-blue-700 md:text-2xl">{user?.Nome}</span>
                     <div className="bg-gray-300 rounded-full p-2">
                         <User size={18}/>
                     </div>

@@ -31,12 +31,13 @@ def cadastrar_preferencias():
 def cadastrar_generos():
     try:
         data = request.get_json()
-        viagem_user = data.get("viagem_user")
-        id_genero = data.get("id_genero")
+        viagem_user = data.get("UsuarioId")
+        id_genero = data.get("GeneroId")
+        preferencia = data.get("Preferencia")
         if not viagem_user or not id_genero:
             return jsonify({"error": "Parâmetros inválidos"}), 400
         
-        viagem_service.cadastrarGeneros(viagem_user, id_genero)
+        viagem_service.cadastrarGeneros(viagem_user, id_genero, preferencia)
         return jsonify({"ok": "ok", "message": "Gêneros cadastrados"})
     
     except Exception as e:
@@ -46,12 +47,13 @@ def cadastrar_generos():
 def cadastrar_lazeres():
     try:
         data = request.get_json()
-        viagem_user = data.get("viagem_user")
-        id_lazer = data.get("id_lazer")
+        viagem_user = data.get("UsuarioId")
+        id_lazer = data.get("LazerId")
+        intensidade = data.get("Intensidade")
         if not viagem_user or not id_lazer:
             return jsonify({"error": "Parâmetros inválidos"}), 400
         
-        viagem_service.cadastrarLazeres(viagem_user, id_lazer)
+        viagem_service.cadastrarLazeres(viagem_user, id_lazer, intensidade)
         return jsonify({"ok": "ok", "message": "Lazeres cadastrados"})
     
     except Exception as e:

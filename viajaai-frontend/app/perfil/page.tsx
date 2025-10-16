@@ -28,7 +28,6 @@ export default function Perfil() {
             alert("Usuário não logado!");
             return;
         }
-        console.log(form)
 
         const res = await fetch("http://localhost:5000/api/viagem/preferences", {
             method: "POST",

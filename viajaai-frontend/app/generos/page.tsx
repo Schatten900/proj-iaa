@@ -1,8 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight } from "lucide-react";
-import router from "next/router";
+import { useRouter } from 'next/navigation'
+import { useUser } from "../../context/UserContext";
 
 type Opcao = {
   id: string;
@@ -12,46 +12,71 @@ type Opcao = {
 
 export default function Preferencias() {
   const opcoes: Opcao[] = [
-    { id: "romance", titulo: "Romance", descricao: "Viagens românticas para casais" },
-    { id: "aventura", titulo: "Aventura", descricao: "Viagens com atividades emocionantes e radicais" },
-    { id: "relaxamento", titulo: "Relaxamento", descricao: "Viagens focadas em descanso e bem-estar" },
-    { id: "historico", titulo: "Histórico", descricao: "Viagens com foco em patrimônio histórico" },
-    { id: "cultural", titulo: "Cultural", descricao: "Viagens para experienciar diferentes culturas" },
-    { id: "gastronomico", titulo: "Gastronômico", descricao: "Viagens focadas em experiências culinárias" },
-    { id: "ecoturismo", titulo: "Ecoturismo", descricao: "Viagens de contato com a natureza" },
+    { id: "1", titulo: "Romance", descricao: "Viagens românticas para casais" },
+    { id: "2", titulo: "Aventura", descricao: "Viagens com atividades emocionantes e radicais" },
+    { id: "3", titulo: "Relaxamento", descricao: "Viagens focadas em descanso e bem-estar" },
+    { id: "4", titulo: "Histórico", descricao: "Viagens com foco em patrimônio histórico" },
+    { id: "5", titulo: "Cultural", descricao: "Viagens para experienciar diferentes culturas" },
+    { id: "6", titulo: "Gastronômico", descricao: "Viagens focadas em experiências culinárias" },
+    { id: "7", titulo: "Ecoturismo", descricao: "Viagens de contato com a natureza" },
   ];
 
-  // armazenar apenas os IDs selecionados
-  const [selecionados, setSelecionados] = useState<string[]>([]);
+  const [selecionados, setSelecionados] = useState<{ [key: string]: number }>({});
+  const { user } = useUser();
+  const router = useRouter()
 
   const toggleOpcao = (id: string) => {
-    setSelecionados((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    setSelecionados((prev) => {
+      const newSelection = { ...prev };
+      if (newSelection[id] !== undefined) {
+        delete newSelection[id];
+      } else {
+        newSelection[id] = 1;
+      }
+      return newSelection;
+    });
   };
 
   const [hover, setHover] = useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setSelecionados({ ...selecionados, [e.target.name]: e.target.value });
-    };
+  const handleIntensityChange = ( id: number, intensity: number) => {
+    setSelecionados((prev) => {
+      if (prev[id] !== undefined && user !== undefined) {
+        return { ...prev, [id]: intensity };
+      }
+      return prev;
+    });
+  };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
 
-        const res = await fetch("http://localhost:5000/api/viagem/generos", {
+    if (!user) {
+            alert("Usuário não logado!");
+            return;
+    }
+
+    console.log(selecionados)
+
+    for (const [ id, Preferencia] of Object.entries(selecionados)) {
+      const res = await fetch("http://localhost:5000/api/viagem/generos", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(selecionados),
-        });
-
-        if (res.ok){
-        alert("Gêneros cadastrado com sucesso!");
-        router.push('/home')
-        } else {
-        alert("Erro ao cadastrar!");
-        }
-    };
+        body: JSON.stringify({ 
+          UsuarioId: user.Id,
+          GeneroId: id, 
+          Preferencia }),
+      });
+    
+      if (!res.ok) {
+        alert(`Erro ao cadastrar o gênero ${id}`);
+        return;
+      }
+    }
+    
+    alert("Gêneros cadastrados com sucesso!");
+    router.push('/home');
+  };
 
   return (
     <div
@@ -61,7 +86,7 @@ export default function Preferencias() {
       {/* Título */}
       <div className="text-center text-white mb-8">
          <h1 style={{ fontSize: "3.5rem", fontWeight: "bold", marginBottom: "1rem", textShadow: "2px 2px 4px rgba(0,0,0,0.7)"}}>
-                Está sendo ótimo te conhecer!
+                Está sendo ótimo te conhecer, {user?.Nome}!
             </h1>
             <h2 style={{ fontSize: "2rem", marginBottom: "2rem", textShadow: "2px 2px 4px rgba(0,0,0,0.7)"}}>
                 Qual o seu gênero de viagem preferido?
@@ -73,7 +98,7 @@ export default function Preferencias() {
         {/* Grid de opções */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {opcoes.map((opcao) => {
-            const selecionado = selecionados.includes(opcao.id);
+            const selecionado = selecionados.hasOwnProperty(opcao.id);
             return (
               <label
                 key={opcao.id}

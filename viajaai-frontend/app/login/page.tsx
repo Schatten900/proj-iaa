@@ -26,8 +26,6 @@ export default function Login() {
       body: JSON.stringify(form),
     });
 
-    console.log(form)
-
     if (res.ok){
       const data = await res.json();
       setUser(data.user);

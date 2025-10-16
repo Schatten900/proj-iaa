@@ -14,12 +14,12 @@ class ViagemContainer:
         except Exception as e:
             raise Exception(f"Erro no cadastro: {str(e)}")
 
-    def cadastrarGenero(self, viagem_user, id_genero, intensidade):
+    def cadastrarGenero(self, viagem_user, id_genero, preferencia):
         try:
             QUERY = """
-                INSERT INTO ViagemGenero (ViagemUsuarioId, GeneroId, Intensidade) VALUES (%s, %s, %s)
+                INSERT INTO GeneroUsuario (UsuarioId, GeneroId, Preferencia) VALUES (%s, %s, %s)
             """
-            params = (viagem_user, id_genero)
+            params = (viagem_user, id_genero, preferencia)
             db_executor.execute_insert(QUERY, params)
         except Exception as e:
             raise Exception(f"Erro ao cadastrar gênero: {str(e)}")
@@ -27,9 +27,9 @@ class ViagemContainer:
     def cadastrarLazeres(self, viagem_user, id_lazer, intensidade):
         try:
             QUERY = """
-                INSERT INTO ViagemLazer (ViagemUsuarioId, LazerId, Intensidade) VALUES (%s, %s, %s)
+                INSERT INTO LazerUsuario (UsuarioId, LazerId, Intensidade) VALUES (%s, %s, %s)
             """
-            params = (viagem_user, id_lazer)
+            params = (viagem_user, id_lazer, intensidade)
             db_executor.execute_insert(QUERY, params)
         except Exception as e:
             raise Exception(f"Erro ao cadastrar lazer: {str(e)}")
