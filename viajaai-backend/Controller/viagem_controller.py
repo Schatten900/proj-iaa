@@ -8,15 +8,51 @@ viagem_bp = Blueprint('viagem', __name__)
 viagem_service = ViagemService()
 
 # Rotas
+
 @viagem_bp.route('/preferences', methods=['POST'])
-def get_preferences():
+def cadastrar_preferencias():
     try:
         data = request.get_json()
-        viagem_service.cadastrarPreferencias()
-        return jsonify({"ok": "ok", "message": "Preferencias cadastradas"})
+        viagem_user = data.get("viagem_user")
+        clima = data.get("clima")
+        preco = data.get("preco")
+        companhia = data.get("companhia")
+        if not viagem_user:
+            return jsonify({"error": "Parâmetros inválidos"}), 400
+        print(viagem_user)
+        
+        viagem_service.cadastrarPreferencias(viagem_user, clima, preco, companhia)
+        return jsonify({"ok": "ok", "message": "Preferências cadastradas"})
     
-    except ValueError as e:
-        return jsonify({"error": str(e)}), 401
+    except Exception as e:
+        return jsonify({'error': f'Erro interno: {e}'}), 500
+
+@viagem_bp.route('/generos', methods=['POST'])
+def cadastrar_generos():
+    try:
+        data = request.get_json()
+        viagem_user = data.get("viagem_user")
+        id_genero = data.get("id_genero")
+        if not viagem_user or not id_genero:
+            return jsonify({"error": "Parâmetros inválidos"}), 400
+        
+        viagem_service.cadastrarGeneros(viagem_user, id_genero)
+        return jsonify({"ok": "ok", "message": "Gêneros cadastrados"})
+    
+    except Exception as e:
+        return jsonify({'error': f'Erro interno: {e}'}), 500
+
+@viagem_bp.route('/lazeres', methods=['POST'])
+def cadastrar_lazeres():
+    try:
+        data = request.get_json()
+        viagem_user = data.get("viagem_user")
+        id_lazer = data.get("id_lazer")
+        if not viagem_user or not id_lazer:
+            return jsonify({"error": "Parâmetros inválidos"}), 400
+        
+        viagem_service.cadastrarLazeres(viagem_user, id_lazer)
+        return jsonify({"ok": "ok", "message": "Lazeres cadastrados"})
     
     except Exception as e:
         return jsonify({'error': f'Erro interno: {e}'}), 500

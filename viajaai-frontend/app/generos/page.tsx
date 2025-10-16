@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
+import router from "next/router";
 
 type Opcao = {
   id: string;
@@ -37,8 +38,19 @@ export default function Preferencias() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Dados do perfil:", selecionados);
-        alert("Dados enviados com sucesso!");
+
+        const res = await fetch("http://localhost:5000/api/viagem/generos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(selecionados),
+        });
+
+        if (res.ok){
+        alert("Gêneros cadastrado com sucesso!");
+        router.push('/home')
+        } else {
+        alert("Erro ao cadastrar!");
+        }
     };
 
   return (
@@ -80,6 +92,13 @@ export default function Preferencias() {
                 />
                 <p className="font-semibold">{opcao.titulo}</p>
                 <p className="text-sm">{opcao.descricao}</p>
+                <select style={{ backgroundColor: "#45736A" }}>
+                    <option value="1" style={{ color: "black" }}>1</option>
+                    <option value="2" style={{ color: "black" }}>2</option>
+                    <option value="3" style={{ color: "black" }}>3</option>
+                    <option value="4" style={{ color: "black" }}>4</option>
+                    <option value="5" style={{ color: "black" }}>5</option>
+                </select>
               </label>
             );
           })}

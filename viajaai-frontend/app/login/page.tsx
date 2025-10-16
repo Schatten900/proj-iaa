@@ -1,6 +1,7 @@
 "use client"
 import { useState } from "react";
 import { useRouter } from 'next/navigation'
+import { useUser } from "../../context/UserContext";  
 
 export default function Login() {
   const [form, setForm] = useState({
@@ -8,7 +9,7 @@ export default function Login() {
     senha: "",
   });
   const router = useRouter()
-
+  const { setUser } = useUser()
   const [hover, setHover] = useState(false);
 
 
@@ -28,6 +29,8 @@ export default function Login() {
     console.log(form)
 
     if (res.ok){
+      const data = await res.json();
+      setUser(data.user);
       alert("Usuário autorizado com sucesso!");
       router.push('/perfil')
     } else {

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { ArrowRight } from "lucide-react";
+import router from "next/router";
 
 type Opcao = {
   id: string;
@@ -11,35 +12,63 @@ type Opcao = {
 
 export default function Preferencias() {
   const opcoes: Opcao[] = [
-    { id: "piscina", titulo: "Piscina", descricao: "Áreas de piscina e relaxamento aquático" },
-    { id: "fotografia", titulo: "Fotografia", descricao: "Pontos cênicos e paisagens" },
-    { id: "compras", titulo: "Compras", descricao: "Comércio e centros de compras" },
-    { id: "natureza", titulo: "Natureza", descricao: "Parques e reservas naturais" },
-    { id: "praia", titulo: "Praia", descricao: "Atividades em praias e litoral" },
-    { id: "radical", titulo: "Radical", descricao: "Esportes radicais e aventuras" },
-    { id: "vida_noturna", titulo: "Vida noturna", descricao: "Bares, clubes e festas" },
+    { id: "1", titulo: "Piscina", descricao: "Áreas de piscina e relaxamento aquático" },
+    { id: "2", titulo: "Fotografia", descricao: "Pontos cênicos e paisagens" },
+    { id: "3", titulo: "Compras", descricao: "Comércio e centros de compras" },
+    { id: "4", titulo: "Natureza", descricao: "Parques e reservas naturais" },
+    { id: "5", titulo: "Praia", descricao: "Atividades em praias e litoral" },
+    { id: "6", titulo: "Radical", descricao: "Esportes radicais e aventuras" },
+    { id: "7", titulo: "Vida noturna", descricao: "Bares, clubes e festas" },
   ];
 
-  // armazenar apenas os IDs selecionados
-  const [selecionados, setSelecionados] = useState<string[]>([]);
+  const [selecionados, setSelecionados] = useState<{ [key: string]: number }>({});
 
   const toggleOpcao = (id: string) => {
-    setSelecionados((prev) =>
-      prev.includes(id) ? prev.filter((item) => item !== id) : [...prev, id]
-    );
+    setSelecionados((prev) => {
+      const newSelection = { ...prev };
+      if (newSelection[id] !== undefined) {
+        // Se já está selecionado, remove o lazer
+        delete newSelection[id];
+      } else {
+        // Se não, adiciona com intensidade padrão (ex: 1)
+        newSelection[id] = 1;
+      }
+      return newSelection;
+    });
+  };
+
+  const handleIntensityChange = (id: string, intensity: number) => {
+    setSelecionados((prev) => {
+      // Só atualiza se o lazer já estiver selecionado
+      if (prev[id] !== undefined) {
+        return { ...prev, [id]: intensity };
+      }
+      return prev;
+    });
   };
 
   const [hover, setHover] = useState(false);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setSelecionados({ ...selecionados, [e.target.name]: e.target.value });
-    };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        console.log("Dados do perfil:", selecionados);
-        alert("Dados enviados com sucesso!");
-    };
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    for (const [id, intensity] of Object.entries(selecionados)) {
+      const res = await fetch("http://localhost:5000/api/viagem/lazeres", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ lazerId: id, intensity }),
+      });
+    
+      if (!res.ok) {
+        alert(`Erro ao cadastrar o lazer ${id}`);
+        return;
+      }
+    }
+    
+    alert("Lazeres cadastrados com sucesso!");
+    router.push('/generos');
+  };
 
   return (
     <div
@@ -61,7 +90,7 @@ export default function Preferencias() {
         {/* Grid de opções */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
           {opcoes.map((opcao) => {
-            const selecionado = selecionados.includes(opcao.id);
+            const selecionado = selecionados.hasOwnProperty(opcao.id);
             return (
               <label
                 key={opcao.id}
@@ -80,6 +109,13 @@ export default function Preferencias() {
                 />
                 <p className="font-semibold">{opcao.titulo}</p>
                 <p className="text-sm">{opcao.descricao}</p>
+                <select style={{ backgroundColor: "#45736A" }}>
+                    <option value="1" style={{ color: "black" }}>1</option>
+                    <option value="2" style={{ color: "black" }}>2</option>
+                    <option value="3" style={{ color: "black" }}>3</option>
+                    <option value="4" style={{ color: "black" }}>4</option>
+                    <option value="5" style={{ color: "black" }}>5</option>
+                </select>
               </label>
             );
           })}

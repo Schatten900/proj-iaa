@@ -5,6 +5,7 @@ from config import Config
 # Import das rotas
 from Controller.test_controller import test_bp
 from Controller.user_controller import user_bp
+from Controller.viagem_controller import viagem_bp
 
 # Banco de dados
 from utils.database_executor import db_manager
@@ -18,6 +19,7 @@ def create_app():
     # Registra blueprints
     app.register_blueprint(test_bp, url_prefix='/api/test')
     app.register_blueprint(user_bp, url_prefix='/api/user')
+    app.register_blueprint(viagem_bp, url_prefix='/api/viagem')
     
     # endpoint para testar conexão com banco
     @app.route('/health')
