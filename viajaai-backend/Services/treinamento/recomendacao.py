@@ -1,9 +1,11 @@
+import numpy as np
+import pandas as pd
 from viagem.viagem_service import ViagemService
 from usuario.user_service import UserService
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.neighbors import NearestNeighbors
-import pandas as pd
+
 
 class ContentRecommender:
     def __init__(self):
@@ -86,15 +88,29 @@ class ContentRecommender:
         
         lista_avaliacoes = self.viagem_service.getTodasAvaliacoes()
         
-        if not lista_avaliacoes:
-            raise Exception("Nenhuma avaliação encontrada para gerar a matriz de utilidade")
-
-        # Constrói o DataFrame
-        df = pd.DataFrame(lista_avaliacoes, columns=['UsuarioId', 'ViagemId', 'Avaliacao'])
+        if lista_avaliacoes and len(lista_avaliacoes) > 0:
+            df = pd.DataFrame(lista_avaliacoes, columns=['UsuarioId', 'ViagemId', 'Avaliacao'])
+            matriz = df.pivot_table(index='UsuarioId', columns='ViagemId', values='Avaliacao').fillna(0)
+            return matriz
         
-        # Gera a matriz Usuário × Viagem
-        matriz = df.pivot_table(index='UsuarioId', columns='ViagemId', values='Avaliacao').fillna(0)
+        # Gerar a matriz aleatoriamente
+        if self.tfidf_viagens is None or self.tfidf_usuarios is None:
+            documentos_viagens = self.criarDocumentoTextualViagens()
+            self.tfidf_viagens = self._vectorizer.fit_transform(documentos_viagens)
 
+            documentos_usuarios = self.criarDocumentoTextualUsuarios()
+            self.tfidf_usuarios = self._vectorizer.transform(documentos_usuarios)
+        
+        sim_matrix = cosine_similarity(self.tfidf_usuarios, self.tfidf_viagens)
+        notas_estimadas = np.clip(sim_matrix * 5, 1, 5)
+        matriz = pd.DataFrame(notas_estimadas, index=self.usuarios_ids, columns=self.viagens_ids)
+
+        for u_index, usuario_id in enumerate(self.usuarios_ids):
+            for v_index, viagem_id in enumerate(self.viagens_ids):
+                nota = round(matriz.iloc[u_index, v_index], 2)
+                self.viagem_service.avaliar(viagem_id, usuario_id, nota)
+
+        print("Matriz simulada gerada")
         return matriz
 
     

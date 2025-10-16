@@ -95,7 +95,7 @@ class ViagemContainer:
                 SELECT * FROM ViagemAvaliacao WHERE ViagemId = %s
             """
             params = (viagem_id,)
-            db_executor.execute_select(QUERY,params)
+            return db_executor.execute_select(QUERY,params)
 
         except Exception as e:
             raise Exception(f"Erro ao selecionar avaliacao: {str(e)}")
