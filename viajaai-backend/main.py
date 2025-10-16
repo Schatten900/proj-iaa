@@ -3,8 +3,8 @@ from flask_cors import CORS
 from config import Config
 
 # Import das rotas
-from Controller.test_controller import test_bp
 from Controller.user_controller import user_bp
+from Controller.recomendacao_controller import recommendation_bp
 
 # Banco de dados
 from utils.database_executor import db_manager
@@ -16,8 +16,8 @@ def create_app():
     CORS(app)
     
     # Registra blueprints
-    app.register_blueprint(test_bp, url_prefix='/api/test')
     app.register_blueprint(user_bp, url_prefix='/api/user')
+    app.register_blueprint(user_bp, url_prefix='/api/recomendar')
     
     # endpoint para testar conexão com banco
     @app.route('/health')

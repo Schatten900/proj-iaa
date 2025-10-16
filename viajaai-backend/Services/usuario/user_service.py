@@ -52,6 +52,18 @@ class UserService:
             None
         
         return result
+    
+    def getLazeres(self,user_id:int)->list:
+        return self._container.getLazeres(user_id)
+    
+    def getUsuarios(self)->list:
+        return self._container.getUsuarios()
+    
+    def getGeneros(self,user_id:int)->list:
+        return self._container.getGeneros(user_id)
+    
+    def getPreferencias(self,user_id:int)->list:
+        return self._container.getPreferencias(user_id)
         
     def cadastrarPreferencias(self,id_user:int,clima:str,preco:str,companhia:str):
         if not self.usuario_existe(id_user):

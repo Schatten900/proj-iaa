@@ -18,7 +18,19 @@ class ViagemService:
 
     def avaliar(self,pontuacao:int,id_usuario:int,id_viagem:int):
         self._container.avaliar(id_usuario,id_viagem,pontuacao)
+
+    def getViagens(self) -> list:
+        return self._container.selecionarTodas()
     
+    def getLazeres(self,viagem_id:int)->list:
+        return self._container.getLazeres(viagem_id)
+    
+    def getGeneros(self,viagem_id:int)->list:
+        return self._container.getGeneros(viagem_id)
+    
+    def getTodasAvaliacoes(self)->list:
+        return self._container.getTodasAvaliacoes()
+
     def getAvaliacao(self,id_viagem:int)-> int:
         viagensAvaliacao = self._container.getAvaliacao(id_viagem)
         if not viagensAvaliacao:
