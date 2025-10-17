@@ -69,7 +69,7 @@ export default function Cadastro() {
               name="nome"
               onChange={handleChange}
               style={{
-                marginBottom: "1rem", // espaçamento entre os campos
+                marginBottom: "1rem", 
                 padding: "10px",
                 background: "#E6E6E6",
                 borderRadius: "15px",
@@ -82,7 +82,7 @@ export default function Cadastro() {
               name="email"
               onChange={handleChange}
               style={{
-                marginBottom: "1rem", // espaçamento entre os campos
+                marginBottom: "1rem", 
                 padding: "10px",
                 background: "#E6E6E6",
                 borderRadius: "15px",
@@ -95,7 +95,7 @@ export default function Cadastro() {
               name="senha"
               onChange={handleChange}
               style={{
-                marginBottom: "1rem", // espaçamento entre os campos
+                marginBottom: "1rem", 
                 padding: "10px",
                 background: "#E6E6E6",
                 borderRadius: "15px",
@@ -109,15 +109,15 @@ export default function Cadastro() {
               onMouseLeave={() => setHover(false)}
               style={{
                 marginTop: "1rem",
-                background: hover ? "#2E8B57": "#45736A", // muda a cor ao passar o mouse
+                background: hover ? "#2E8B57": "#45736A", 
                 color: "#fff",
                 padding: "10px",
                 borderRadius: "20px",
                 border: "none",
                 cursor: "pointer",
                 fontWeight: "bold",
-                boxShadow: hover ? "0px 4px 12px rgba(0,0,0,0.3)" : "none", // sombra no hover
-                transition: "all 0.3s ease", // animação suave
+                boxShadow: hover ? "0px 4px 12px rgba(0,0,0,0.3)" : "none",
+                transition: "all 0.3s ease", 
               }}>
                 Cadastre-se
             </button>

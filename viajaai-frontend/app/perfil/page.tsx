@@ -1,24 +1,50 @@
 "use client";
+import { useRouter } from 'next/navigation'
 import { useState } from "react";
+import { useUser } from "../../context/UserContext";
 
 export default function Perfil() {
+
+    const router = useRouter()
+    
+    const { user } = useUser();
     const [form, setForm] = useState({
-        clima: "",
-        orcamento: "",
-        pessoas: "",
+        clima: "Quente",
+        preco: "Econômico",
+        companhia: "Sozinho",
     });
 
     const [hover, setHover] = useState(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-        setForm({ ...form, [e.target.name]: e.target.value });
+        const { name, value } = e.target;
+        setForm({ ...form, [name]: value });
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        console.log("Dados do perfil:", form);
-        alert("Dados enviados com sucesso!");
+
+        if (!user) {
+            alert("Usuário não logado!");
+            return;
+        }
+
+        const res = await fetch("http://localhost:5000/api/viagem/preferences", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({viagem_user: user.Id, ...form}),
+        });
+
+        if (res.ok){
+            alert("Perfil cadastrado com sucesso!");
+            router.push('/lazeres')
+        } else {
+            alert("Erro ao cadastrar!");
+        }
     };
+
+    console.log(user?.Id)
+
 
     return(
         <div
@@ -37,7 +63,7 @@ export default function Perfil() {
             {/*Cabeçalho*/}
 
             <h1 style={{ fontSize: "4rem", fontWeight: "bold", marginBottom: "1rem", textShadow: "2px 2px 4px rgba(0,0,0,0.7)"}}>
-                Olá, user!
+                Olá, {user?.Nome}!
             </h1>
             <h2 style={{ fontSize: "2rem", marginBottom: "2rem", textShadow: "2px 2px 4px rgba(0,0,0,0.7)"}}>
                 Nos conte mais sobre você
@@ -75,8 +101,8 @@ export default function Perfil() {
                 <div style={cardStyle}>
                     <label style={labelStyle}>Qual seu orçamento para a viagem?</label>
                     <select
-                        name="orcamento"
-                        value={form.orcamento}
+                        name="preco"
+                        value={form.preco}
                         onChange={handleChange}
                         style={inputStyle}
                     >
@@ -91,8 +117,8 @@ export default function Perfil() {
                 <div style={cardStyle}>
                     <label style={labelStyle}>Qual será sua companhia de viagem?</label>
                     <select
-                        name="pessoas"
-                        value={form.pessoas}
+                        name="companhia"
+                        value={form.companhia}
                         onChange={handleChange}
                         style={inputStyle}
                     >
@@ -102,36 +128,34 @@ export default function Perfil() {
                         <option value="Amigos">Amigos</option>
                     </select>
                 </div>
-            </form>
 
-            {/*Botão avançar*/}
-            <button
-                type="submit"
-                onClick={handleSubmit}
-                onMouseEnter={() => setHover(true)}
-                onMouseLeave={() => setHover(false)}
-                style={{
-                    position: "fixed",
-                    bottom: "20px",
-                    right: "20px",
-                    marginTop: "2rem",
-                    background: hover ? "#D9E6E6": "#F2EFEF" ,
-                    color: "#000",
-                    borderRadius: "50%",
-                    width: "80px",
-                    height: "40px",
-                    padding: "15px",
-                    border: "none",
-                    cursor: "pointer",
-                    fontSize: "1.2rem",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
-            >
-                ➡
-            </button>
-            
+                {/*Botão avançar*/}
+                <button
+                    type="submit"
+                    onMouseEnter={() => setHover(true)}
+                    onMouseLeave={() => setHover(false)}
+                    style={{
+                        position: "fixed",
+                        bottom: "20px",
+                        right: "20px",
+                        marginTop: "2rem",
+                        background: hover ? "#D9E6E6": "#F2EFEF" ,
+                        color: "#000",
+                        borderRadius: "50%",
+                        width: "80px",
+                        height: "40px",
+                        padding: "15px",
+                        border: "none",
+                        cursor: "pointer",
+                        fontSize: "1.2rem",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                    }}
+                >
+                    ➡
+                </button>
+            </form>
         </div>
     )
 }
