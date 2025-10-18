@@ -31,6 +31,10 @@ export default function Preferencias() {
       if (newSelection[id] !== undefined) {
         delete newSelection[id];
       } else {
+        if (Object.keys(newSelection).length >= 3 ) {
+          alert("Você deve selecionar 3 lazeres!");
+          return prev;
+        }
         newSelection[id] = 1;
       }
       return newSelection;
@@ -57,7 +61,10 @@ export default function Preferencias() {
             return;
     }
 
-    console.log(selecionados)
+    if (Object.keys(selecionados).length !== 3) {
+      alert("Por favor, selecione exatamente 3 lazeres!");
+      return;
+    }
 
     for (const [ id, Intensidade] of Object.entries(selecionados)) {
       const res = await fetch("http://localhost:5000/api/viagem/lazeres", {

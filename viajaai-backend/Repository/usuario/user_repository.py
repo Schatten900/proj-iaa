@@ -60,7 +60,7 @@ class UserContainer:
     def getLazeres(self,usuario_id:int)->list:
         try:
             QUERY = """
-            SELECT l.Nome FROM LazerUsuario AS lu
+            SELECT l.Nome,lu.Intensidade FROM LazerUsuario AS lu
             JOIN Lazer AS l ON l.Id = lu.LazerId
             WHERE UsuarioId = %s
             """
@@ -68,31 +68,31 @@ class UserContainer:
             return db_executor.execute_select(QUERY,params)
 
         except Exception as e:
-            return Exception(f"Erro ao selecionar lazeres: {str(e)}")
+            raise Exception(f"Erro ao selecionar lazeres: {str(e)}")
 
     def getGeneros(self,usuario_id:int)->list:
         try:
             QUERY = """
-            SELECT l.Nome FROM GeneroUsuario AS gu
-            JOIN Lazer AS l ON l.Id = gu.LazerId
-            WHERE UsuarioId = %s
+            SELECT g.Nome,gu.Preferencia FROM GeneroUsuario AS gu
+            JOIN Genero AS g ON g.Id = gu.GeneroId
+            WHERE gu.UsuarioId = %s
             """
             params = (usuario_id,)
             return db_executor.execute_select(QUERY,params)
 
         except Exception as e:
-            return Exception(f"Erro ao selecionar generos: {str(e)}")
+            raise Exception(f"Erro ao selecionar generos: {str(e)}")
 
 
     def getUsuarios(self)->list:
         try:
             QUERY = """
-            SELECT Nome FROM Usuario ORDER BY id ASC
+            SELECT Id,Nome FROM Usuario ORDER BY id ASC
             """
             return db_executor.execute_select(QUERY)
 
         except Exception as e:
-            return Exception(f"Erro ao selecionar usuarios: {str(e)}")
+            raise Exception(f"Erro ao selecionar usuarios: {str(e)}")
 
     def getPreferencias(self,usuario_id:int)->list:
         try:
@@ -104,6 +104,6 @@ class UserContainer:
             return db_executor.execute_select(QUERY,params)
 
         except Exception as e:
-            return Exception(f"Erro ao selecionar preferencias: {str(e)}")
+            raise Exception(f"Erro ao selecionar preferencias: {str(e)}")
 
         

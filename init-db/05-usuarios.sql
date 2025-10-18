@@ -256,6 +256,7 @@ INSERT INTO LazerUsuario (UsuarioId, LazerId, Intensidade) VALUES
 -- AVALIAÇÕES DAS VIAGENS 
 -- =============================================================================
 
+
 INSERT INTO ViagemAvaliacao (UsuarioId, ViagemId, Avaliacao)
 WITH avaliacoes_realistas AS (
     SELECT 
