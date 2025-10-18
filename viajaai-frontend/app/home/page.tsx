@@ -9,16 +9,51 @@ interface Destino {
   score: number;
   img?: string;
   nome?: string;
-  pais?: string;
   custo?: string;
-  moeda?: string;
   rating?: number;
+  descricao?:string
 }
 
 export default function HomePage() {
   const [destinos, setDestinos] = useState<Destino[]>([]);
   const { user } = useUser();
   const router = useRouter();
+
+
+  const handleComprar = async (e:React.FormEvent,viagem_id:number) => {
+    e.preventDefault();
+    if (!user){
+      alert("Usuário não logado!");
+      return;
+    }
+    try{
+
+      const res = await fetch("http://localhost:5000/api/viagem/comprar",{
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ userId: user.Id, viagemId: viagem_id }),
+      })
+
+      const data = await res.json();
+      if (data.ok){
+        alert("Viagem comprada com sucesso!")
+        router.push('/viagem')
+      }
+      else{
+        alert(data.error || "Erro ao comprar viagem.");
+      }
+      
+
+      if (!res.ok) {
+        throw new Error(`Erro ao comprar viagens: ${res.status}`);
+      }
+
+    }
+    catch(error){
+      console.error("Erro:", error);
+      alert("Erro ao buscar viagens");
+    }
+  }
 
   const handleRecomendar = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -64,10 +99,8 @@ export default function HomePage() {
           <h1 className="text-lg font-semibold text-blue-700">Viaja.AI</h1>
         </div>
         <nav className="flex space-x-8 text-gray-700 md:text-2xl">
-          <a href="#" className="hover:text-blue-600">Home</a>
-          <a href="#" className="hover:text-blue-600">Viagens</a>
-          <a href="#" className="hover:text-blue-600">Sobre</a>
-          <a href="#" className="hover:text-blue-600">Contato</a>
+          <a href="/home" className="hover:text-blue-600">Home</a>
+          <a href="/viagem" className="hover:text-blue-600">Viagens</a>
         </nav>
         <div className="flex items-center gap-2">
           <span className="text-blue-700 md:text-2xl">{user?.Nome}</span>
@@ -136,6 +169,13 @@ export default function HomePage() {
                         fill={j < (d.rating || 0) ? "yellow" : "none"}
                       />
                     ))}
+                  </div>
+                  <div >
+                    <button 
+                    onClick={(e)=>handleComprar(e,d.viagem_id)}
+                    className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition">
+                      Comprar
+                      </button>
                   </div>
                 </div>
               </div>

@@ -25,3 +25,4 @@ def recomendarViagens():
     except Exception as e:
         print(f"erro encontrado: {e}")
         return jsonify({"ok": False,'error': f'Erro interno: {e}'}), 500
+    

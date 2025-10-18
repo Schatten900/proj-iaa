@@ -16,11 +16,20 @@ class ViagemService:
     def cadastrarLazeres(self, viagem_user: int, id_lazer: int, intensidade: int):
         return self._container.cadastrarLazeres(viagem_user, id_lazer, intensidade)
 
-    def avaliar(self,pontuacao:int,id_usuario:int,id_viagem:int):
-        self._container.avaliar(id_usuario,id_viagem,pontuacao)
+    def avaliar(self,id_viagem:int,id_usuario:int,pontuacao:int):
+        self._container.avaliar(id_viagem,id_usuario,pontuacao)
+
+    def comprar(self,id_viagem:int,id_usuario:int,pontuacao:int):
+        self._container.comprar(id_viagem,id_usuario,pontuacao)
+
+    def checarCompra(self,id_viagem:int,id_usuario):
+        self._container.checarCompra(id_viagem,id_usuario)
         
     def getViagens(self) -> list:
         return self._container.selecionarTodas()
+    
+    def getViagemUsuario(self,usuario_id:int)->list:
+        return self._container.getViagemUsuario(usuario_id)
     
     def getViagem(self,viagem_id)->list:
         return self._container.selecionar(viagem_id)
