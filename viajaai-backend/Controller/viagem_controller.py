@@ -55,7 +55,58 @@ def cadastrar_lazeres():
             return jsonify({"ok": False,"error": "Parâmetros inválidos"}), 400
         
         viagem_service.cadastrarLazeres(viagem_user, id_lazer, intensidade)
-        return jsonify({"ok": True, "message": "Lazeres cadastrados"})
+        return jsonify({"ok": True, "message": "Lazeres cadastrados"}),200
     
     except Exception as e:
         return jsonify({"ok": False,'error': f'Erro interno: {e}'}), 500
+    
+@viagem_bp.route("/comprar",methods=["POST"])
+def comprarViagem():
+    try:
+        data = request.get_json()
+        if (not data):
+            return jsonify({"ok":False,
+                            "error": "Parametros invalidos"}),400
+        viagem_id = data.get("viagemId")
+        usuario_id = data.get("userId")
+        pontuacao = 0
+
+        ja_comprou = viagem_service.checarCompra(viagem_id,usuario_id)
+        if (ja_comprou):
+            return jsonify({"ok":False,"message":"Usuario já comprou esta viagem"}),400
+
+        viagem_service.comprar(viagem_id,usuario_id,pontuacao)
+        return jsonify({"ok": True, "message": "Compra feita com sucesso"}),200
+    
+    except Exception as e:
+        return jsonify({"ok":False,"error":f"Erro interno:{e}"}),500
+    
+@viagem_bp.route("/avaliar",methods=["POST"])
+def avaliarViagem():
+    try:
+        data = request.get_json()
+        if (not data):
+            return jsonify({"ok":False,
+                            "error": "Parametros invalidos"}),400
+        viagem_id = data.get("viagemId")
+        usuario_id = data.get("userId")
+        pontuacao = data.get("pontuacao")
+        viagem_service.avaliar(viagem_id,usuario_id,pontuacao)
+        return jsonify({"ok": True, "message": "viagem avaliada com sucesso"}),200
+    except Exception as e:
+        return jsonify({"ok":False,"error":f"Erro interno:{e}"}),500
+    
+@viagem_bp.route("/obter",methods=["POST"])
+def obterViagens():
+    try:
+        data = request.get_json()
+        if (not data):
+            return jsonify({"ok":False,
+                            "error": "Parametros invalidos"}),400
+        usuario_id = data.get("userId")
+
+        viagens = viagem_service.getViagemUsuario(usuario_id)
+        return jsonify({"ok": True, "message": "Viagens obtidas com sucesso", "viagens": viagens}),200
+    
+    except Exception as e:
+        return jsonify({"ok":False,"error":f"Erro interno:{e}"}),500

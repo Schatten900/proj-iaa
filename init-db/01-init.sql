@@ -82,6 +82,7 @@ CREATE TABLE IF NOT EXISTS ViagemAvaliacao(
     ViagemId INT NOT NULL,
     UsuarioId INT NOT NULL,
     Avaliacao FLOAT NOT NULL DEFAULT 0,
+    PRIMARY KEY (ViagemId,UsuarioId),
     FOREIGN KEY (ViagemId) REFERENCES Viagem(Id) ON DELETE CASCADE,
     FOREIGN KEY (UsuarioId) REFERENCES Usuario(Id) ON DELETE CASCADE 
 );
