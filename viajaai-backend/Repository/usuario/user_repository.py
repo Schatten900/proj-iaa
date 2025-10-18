@@ -56,4 +56,54 @@ class UserContainer:
         except Exception as e:
             raise Exception(f"Erro ao cadastrar preferencias: {str(e)}")
 
+
+    def getLazeres(self,usuario_id:int)->list:
+        try:
+            QUERY = """
+            SELECT l.Nome,lu.Intensidade FROM LazerUsuario AS lu
+            JOIN Lazer AS l ON l.Id = lu.LazerId
+            WHERE UsuarioId = %s
+            """
+            params = (usuario_id,)
+            return db_executor.execute_select(QUERY,params)
+
+        except Exception as e:
+            raise Exception(f"Erro ao selecionar lazeres: {str(e)}")
+
+    def getGeneros(self,usuario_id:int)->list:
+        try:
+            QUERY = """
+            SELECT g.Nome,gu.Preferencia FROM GeneroUsuario AS gu
+            JOIN Genero AS g ON g.Id = gu.GeneroId
+            WHERE gu.UsuarioId = %s
+            """
+            params = (usuario_id,)
+            return db_executor.execute_select(QUERY,params)
+
+        except Exception as e:
+            raise Exception(f"Erro ao selecionar generos: {str(e)}")
+
+
+    def getUsuarios(self)->list:
+        try:
+            QUERY = """
+            SELECT Id,Nome FROM Usuario ORDER BY id ASC
+            """
+            return db_executor.execute_select(QUERY)
+
+        except Exception as e:
+            raise Exception(f"Erro ao selecionar usuarios: {str(e)}")
+
+    def getPreferencias(self,usuario_id:int)->list:
+        try:
+            QUERY = """
+            SELECT Clima,Preco,Companhia FROM Preferencias
+            WHERE UsuarioId = %s
+            """
+            params = (usuario_id,)
+            return db_executor.execute_select(QUERY,params)
+
+        except Exception as e:
+            raise Exception(f"Erro ao selecionar preferencias: {str(e)}")
+
         

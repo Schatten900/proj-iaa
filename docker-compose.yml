@@ -37,7 +37,8 @@ services:
       - FLASK_APP=main.py 
       - DATABASE_URL=mysql+mysqlconnector://myuser:mypassword@mysql:3306/mydatabase
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
     networks:
       - app-network
 

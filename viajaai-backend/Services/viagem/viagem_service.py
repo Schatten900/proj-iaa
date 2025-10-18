@@ -18,15 +18,30 @@ class ViagemService:
 
     def avaliar(self,pontuacao:int,id_usuario:int,id_viagem:int):
         self._container.avaliar(id_usuario,id_viagem,pontuacao)
+        
+    def getViagens(self) -> list:
+        return self._container.selecionarTodas()
     
+    def getViagem(self,viagem_id)->list:
+        return self._container.selecionar(viagem_id)
+    
+    def getLazeres(self,viagem_id:int)->list:
+        return self._container.getLazeres(viagem_id)
+    
+    def getGeneros(self,viagem_id:int)->list:
+        return self._container.getGeneros(viagem_id)
+    
+    def getTodasAvaliacoes(self)->list:
+        return self._container.getTodasAvaliacoes()
+
     def getAvaliacao(self,id_viagem:int)-> int:
-        viagensAvaliacao = self._container.getAvaliacao(id_viagem)
-        if not viagensAvaliacao:
-            raise Exception(f"Não foi possivel encontrar as avaliacoes") 
+        avaliacoes = self._container.getAvaliacao(id_viagem)
+        if not avaliacoes:
+            return 0.0
 
         soma = 0
-        for viagem in viagensAvaliacao:
-            soma += viagem[2]   # soma todas as avaliacoes da viagem
+        for avaliacao in avaliacoes:
+            soma += avaliacao.get("Avaliacao", 0)
 
-        return soma/len(viagensAvaliacao)   
+        return round(soma/len(avaliacoes),2)   
         
