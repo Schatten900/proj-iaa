@@ -24,66 +24,75 @@ class ContentRecommender:
     # Criar documentos textuais
     # ==============================
     def criarDocumentoTextualViagens(self):
-        lista_viagens = self.viagem_service.getViagens()  # retorna lista de dicts
+        lista_viagens = self.viagem_service.getViagens()  # lista de dicts
         lista_documentos_viagens = []
         self.viagens_ids = []
 
         for viagem in lista_viagens:
-            documentoViagem = ""
-            viagem_id = viagem["Id"]  # chave do seu banco
+            documento = []
+            viagem_id = viagem["Id"]
             self.viagens_ids.append(viagem_id)
 
-            # Campos básicos da viagem
+            # Campos básicos
             for campo in ['Nome', 'Descricao', 'Clima', 'Preco', 'Companhia']:
-                documentoViagem += str(viagem.get(campo, "")) + " "
+                valor = str(viagem.get(campo, "")).strip()
+                if valor:
+                    documento.append(valor)
 
             # Gêneros
             generos = self.viagem_service.getGeneros(viagem_id)
             for genero in generos:
-                documentoViagem += genero["Nome"] + " "
+                nome = genero["Nome"].strip()
+                intensidade = int(genero.get("Intensidade", 1))
+                documento.extend([nome] * intensidade)  # repete pelo peso
 
             # Lazer
             lazeres = self.viagem_service.getLazeres(viagem_id)
             for lazer in lazeres:
-                documentoViagem += lazer["Nome"] + " "
+                nome = lazer["Nome"].strip()
+                qualidade = int(lazer.get("Qualidade", 1))
+                documento.extend([nome] * qualidade)
 
-            lista_documentos_viagens.append(documentoViagem.strip())
+            lista_documentos_viagens.append(" ".join(documento))
 
         return lista_documentos_viagens
 
     def criarDocumentoTextualUsuario(self, usuario_id):
-        documentoUsuario = ""
+        documento = []
 
-        # Preferencias do usuario
+        # Preferências do usuário
         preferencias = self._usuario_service.getPreferencias(usuario_id)
         if preferencias and len(preferencias) > 0:
-            clima, preco, companhia = preferencias[0]  
-            documentoUsuario += f"{clima} {preco} {companhia} "
+            clima, preco, companhia = preferencias[0]
+            documento.extend([str(clima), str(preco), str(companhia)])
 
-        # Generos do usuario
+        # Gêneros
         generos = self._usuario_service.getGeneros(usuario_id)
         for genero in generos:
-            documentoUsuario += genero["Nome"] + " "
+            nome = genero["Nome"].strip()
+            peso = int(genero.get("Preferencia", 1))
+            documento.extend([nome] * peso)
 
-        # Lazer do usuario
+        # Lazer
         lazeres = self._usuario_service.getLazeres(usuario_id)
         for lazer in lazeres:
-            documentoUsuario += lazer["Nome"] + " "
+            nome = lazer["Nome"].strip()
+            peso = int(lazer.get("Intensidade", 1))
+            documento.extend([nome] * peso)
 
-        return documentoUsuario.strip()
+        return " ".join(documento)
 
     def criarDocumentoTextualUsuarios(self):
-        lista_usuarios = self._usuario_service.getUsuarios()  # retorna lista de dicts
-        lista_documentos_usuarios = []
+        lista_usuarios = self._usuario_service.getUsuarios()
+        documentos = []
         self.usuarios_ids = []
 
         for usuario in lista_usuarios:
-            usuario_id = usuario["Id"]  
+            usuario_id = usuario["Id"]
             self.usuarios_ids.append(usuario_id)
-            documentoUsuario = self.criarDocumentoTextualUsuario(usuario_id)
-            lista_documentos_usuarios.append(documentoUsuario)
+            documentos.append(self.criarDocumentoTextualUsuario(usuario_id))
 
-        return lista_documentos_usuarios
+        return documentos
 
     # ==============================
     # TF-IDF
@@ -103,14 +112,12 @@ class ContentRecommender:
     def gerarMatrizUtilidade(self):
         lista_avaliacoes = self.viagem_service.getTodasAvaliacoes()
         
-        if lista_avaliacoes and len(lista_avaliacoes) > 0:
+        if lista_avaliacoes:
             df = pd.DataFrame(lista_avaliacoes, columns=['UsuarioId', 'ViagemId', 'Avaliacao'])
             matriz = df.pivot_table(index='UsuarioId', columns='ViagemId', values='Avaliacao').fillna(0)
             return matriz
 
-        # Simula a matriz se não houver avaliações
-
-        print("Simulando a matriz...")
+        # Simula se não houver avaliações
         if self.tfidf_viagens is None or self.tfidf_usuarios is None:
             self.aplicarTfIdfGlobal()
 
@@ -122,14 +129,9 @@ class ContentRecommender:
         for u_index, usuario_id in enumerate(self.usuarios_ids):
             for v_index, viagem_id in enumerate(self.viagens_ids):
                 nota = round(matriz.iloc[u_index, v_index], 2)
-
-                viagem_existe = self.viagem_service.getViagem(viagem_id)
-                if viagem_existe and len(viagem_existe) > 0:
+                if self.viagem_service.getViagem(viagem_id):
                     self.viagem_service.avaliar(viagem_id, usuario_id, nota)
-                else:
-                    print(f"Aviso: ViagemId {viagem_id} não existe no banco. Avaliação ignorada.")
 
-        print("Matriz simulada gerada")
         return matriz
 
     # ==============================
@@ -156,18 +158,16 @@ class ContentRecommender:
         sim_conteudo = cosine_similarity(tfidf_usuario, self.tfidf_viagens).flatten()
         sim_colab = self.matriz_utilidade.mean(axis=0).values
 
-        # Combina 70% conteúdo + 30% colaborativo
         score_final = 0.7 * sim_conteudo + 0.3 * sim_colab
 
         indices_top = score_final.argsort()[::-1][:top_recomendacoes]
-    
+
         recomendacoes = []
         for idx in indices_top:
             viagem_id = self.viagens_ids[idx]
             score = float(score_final[idx])
-
             viagem = self.viagem_service.getViagem(viagem_id)
-            if viagem and len(viagem) > 0:
+            if viagem:
                 v = viagem[0]
                 rating = self.viagem_service.getAvaliacao(viagem_id)
                 recomendacoes.append({
@@ -179,9 +179,5 @@ class ContentRecommender:
                     "score": round(score, 3),
                     "rating": rating
                 })
-
-        print(f"\nTop {top_recomendacoes} recomendações para o usuário {usuario_id}:")
-        for i, v in enumerate(recomendacoes):
-            print(f"{i+1}. {v['nome']} — score: {v['score']:.3f}")
 
         return recomendacoes
