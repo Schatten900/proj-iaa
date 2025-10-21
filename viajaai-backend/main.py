@@ -8,6 +8,9 @@
 #>- Leticia Gonçalves Bomfim - 241002411
 
 # O relatório se encontra dentro da pasta viajaai-back, chamado relatorio.ipynb
+# Link para a página do github: https://github.com/Schatten900/proj-iaa
+# Link para o clone do repositório: https://github.com/Schatten900/proj-iaa.git
+
 from flask import Flask
 from flask_cors import CORS
 from config import Config
