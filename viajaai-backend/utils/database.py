@@ -4,6 +4,7 @@ from contextlib import contextmanager
 import os
 
 class DatabaseManager:
+    # COnfiguracao do banco de dados
     def __init__(self):
         self.config = {
             'host': os.getenv('DB_HOST', 'mysql'),
@@ -16,6 +17,7 @@ class DatabaseManager:
 
     @contextmanager
     def get_connection(self):
+        # Metodo que retorna a conexão do banco de dados
         conn = None
         try:
             conn = mysql.connector.connect(**self.config)

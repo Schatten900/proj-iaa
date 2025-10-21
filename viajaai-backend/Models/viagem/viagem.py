@@ -39,9 +39,6 @@ class TipoLazer(Enum):
     COMPRAS = 3
     RADICAL = 4
 
-
-# https://chat.deepseek.com/share/8atmloanhdr93ly3gw
-
 class Viagem:
     def __init__(self, id, nome, descricao, clima, preco, companhia, popularidade=0):
         self.id = id
