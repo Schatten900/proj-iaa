@@ -1,3 +1,12 @@
+#>> Projeto 1 de Grafos 
+#>> Disciplina: Teoria dos Grafos — UnB
+#>> Turma: 01, 2025/2
+#>> Professor: Dibio
+#>>> Integrantes:
+#>- Adrielly Vitória Costa de Lima - 231018973
+#>- Carlos Cauã Rocha da Silva - 231034304
+#>- Leticia Gonçalves Bomfim - 241002411
+
 from flask import Flask
 from flask_cors import CORS
 from config import Config
