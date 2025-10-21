@@ -7,6 +7,7 @@
 #>- Carlos Cauã Rocha da Silva - 231034304
 #>- Leticia Gonçalves Bomfim - 241002411
 
+# O relatório se encontra dentro da pasta viajaai-back, chamado relatorio.ipynb
 from flask import Flask
 from flask_cors import CORS
 from config import Config
